@@ -153,7 +153,7 @@ export const welcomeEmailTemplate = `<!DOCTYPE html>
   <body>
     <div class="email-container">
       <div class="header">
-        <h1>Welcome to MERN AUTH!</h1>
+        <h1>Welcome to LMS</h1>
       </div>
       <div class="content">
         <h2>Congratulations, [User's Name]!</h2>
@@ -167,7 +167,7 @@ export const welcomeEmailTemplate = `<!DOCTYPE html>
       </div>
       <div class="footer">
         <p>Need help? Visit our <a href="#">Help Center</a> or contact us at <a href="mailto:support@example.com">support@example.com</a>.</p>
-        <p>&copy; 2024 MERN AUTH. All rights reserved.</p>
+        <p>&copy; 2024 LMS. All rights reserved.</p>
       </div>
     </div>
   </body>

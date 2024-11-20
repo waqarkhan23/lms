@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import useLoginMutation from "../hooks/auth/Login";
+import useSignUpMutation from "@/hooks/auth/Signup";
 
 const Login = () => {
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
@@ -19,6 +21,9 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const { mutate } = useLoginMutation();
+  const { mutate: signup } = useSignUpMutation();
+
   const handleLoginInputChange = (event, type) => {
     if (type === "login") {
       setLoginInput({ ...loginInput, [event.target.id]: event.target.value });
@@ -30,14 +35,15 @@ const Login = () => {
     let inputData = {};
     if (type === "login") {
       inputData = loginInput;
-      console.log("Login submitted with:", inputData);
+      mutate(inputData);
     } else {
       inputData = signupInput;
+      signup(inputData);
       console.log("Signup submitted with:", inputData);
     }
   };
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex items-center justify-center h-screen">
       <Tabs defaultValue="login" className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="signup">Signup</TabsTrigger>

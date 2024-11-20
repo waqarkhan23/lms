@@ -5,6 +5,8 @@ import {
   sendVerificationCodeTemplate,
   welcomeEmailTemplate,
 } from "../utils/email/emailTemplates.js";
+import { tryCatch } from "../utils/tryCatch.js";
+
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -41,17 +43,20 @@ export const signup = async (req, res) => {
 
 export const verifyAccount = async (req, res) => {
   const { code } = req.body;
+  console.log(code);
   try {
     if (!code) {
       return res.status(400).json({ message: "Verification code is required" });
     }
+
     const user = await User.findOne({
       verificationToken: code,
-      verificationTokenExpiredAt: { $gt: Date.now() },
+      verificationTokenExpiredAt: { $gt: new Date() },
     });
     if (!user) {
       return res.status(404).json({ message: "invalid verification code" });
     }
+
     user.verificationToken = null;
     user.verificationTokenExpiredAt = null;
     user.isVerified = true;
@@ -94,7 +99,7 @@ export const login = async (req, res) => {
       sameSite: "strict",
       maxAge: 3600000,
     });
-    res.json({ message: "Logged in successfully", token });
+    res.json({ message: "Logged in successfully", user, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

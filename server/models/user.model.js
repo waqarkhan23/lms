@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema(
     },
     verificationTokenExpiredAt: {
       type: Date,
-      default: Date.now() + 30 * 60 * 1000, // 30 minutes
+      default: () => new Date(Date.now() + 30 * 60 * 1000),
     },
   },
   { timestamps: true }
