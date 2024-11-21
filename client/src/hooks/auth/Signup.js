@@ -14,7 +14,15 @@ const useSignUpMutation = () => {
       );
       return response.data;
     } catch (error) {
-      console.error(error);
+      if (error.response) {
+        throw new Error(
+          error.response.data.message || "An error occurred during sign up"
+        );
+      } else if (error.request) {
+        throw new Error("No response received from server");
+      } else {
+        throw new Error("Error setting up the request");
+      }
     }
   };
   const mutation = useMutation({
@@ -31,6 +39,7 @@ const useSignUpMutation = () => {
         title: "Sign Up Failed",
         description: error.message,
         appearance: "error",
+        variant: "destructive",
       });
     },
   });

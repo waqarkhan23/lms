@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
@@ -46,12 +46,16 @@ const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
-                  <School className="mr-2 h-4 w-4" />
-                  <span>My Learning</span>
+                  <Link className="flex" to={"/my-learning"}>
+                    <School className="mr-2 h-4 w-4" />
+                    <span>My Learning</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <Link className="flex" to={"/profile"}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <LogOut className="mr-2 h-4 w-4" />
