@@ -6,7 +6,12 @@ import {
   welcomeEmailTemplate,
 } from "../utils/email/emailTemplates.js";
 import { tryCatch } from "../utils/tryCatch.js";
-
+import { generateJWTToken } from "../utils/generateJwtToken.js";
+import cloudinary, {
+  deleteMediaFromCloudinary,
+  uploadMediaToCloudinary,
+} from "../utils/cloudinary.js";
+import fs from "fs/promises";
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -92,16 +97,94 @@ export const login = async (req, res) => {
       return res.status(403).json({ message: "Account is not verified" });
     }
 
-    const token = user.generateJwtToken();
-    res.cookie("Authorization", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 3600000,
-    });
+    const token = generateJWTToken(res, user._id);
+
     res.json({ message: "Logged in successfully", user, token });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("Authorization", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+      maxAge: 0,
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "failed to logout" });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  const userId = req.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  res.status(200).json({ message: "User profile", user });
+  try {
+  } catch (error) {
+    res.status(500).json({ message: "Failed to Load User " });
+  }
+};
+export const updateUserProfile = async (req, res) => {
+  const userId = req.id;
+  try {
+    const { name } = req.body;
+    const profilePhoto = req.file;
+
+    if (!name && !profilePhoto) {
+      return res
+        .status(400)
+        .json({ message: "At least one field is required" });
+    }
+
+    let updatedUser = await User.findById(userId);
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) {
+      updatedUser.name = name;
+    }
+
+    if (profilePhoto) {
+      if (updatedUser.photoUrl) {
+        const publicId = updatedUser.photoUrl.split("/").pop().split(".")[0];
+        await deleteMediaFromCloudinary(publicId);
+      }
+
+      const result = await uploadMediaToCloudinary(profilePhoto);
+
+      if (!result.secure_url) {
+        return res
+          .status(500)
+          .json({ message: "Failed to upload profile photo" });
+      }
+
+      updatedUser.photoUrl = result.secure_url;
+
+      try {
+        await fs.unlink(profilePhoto.path);
+        console.log(`Successfully deleted temp file: ${profilePhoto.path}`);
+      } catch (unlinkError) {
+        console.error(`Error deleting temp file: ${unlinkError}`);
+      }
+    }
+
+    await updatedUser.save();
+
+    res.status(200).json({
+      message: "User profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user profile:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

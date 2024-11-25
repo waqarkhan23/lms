@@ -15,6 +15,7 @@ const useLoginMutation = () => {
         `${import.meta.env.VITE_BASE_URL}/login`,
         data
       );
+      localStorage.setItem("token", response.data.token);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || "Login failed");

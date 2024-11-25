@@ -12,6 +12,7 @@ const userSlice = createSlice({
   reducers: {
     setUser(state, action) {
       state.user = action.payload;
+      state.isAuthenticated = true;
     },
     setVerified(state, action) {
       state.isVerified = action.payload;
@@ -19,9 +20,15 @@ const userSlice = createSlice({
     setAuthenticated(state, action) {
       state.isAuthenticated = action.payload;
     },
+    logout(state) {
+      state.user = null;
+      state.isAuthenticated = false;
+      state.isVerified = false;
+    },
   },
 });
 
-export const { setUser, setVerified, setAuthenticated } = userSlice.actions;
+export const { setUser, setVerified, setAuthenticated, logout } =
+  userSlice.actions;
 
 export default userSlice.reducer;

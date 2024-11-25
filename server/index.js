@@ -14,13 +14,11 @@ const PORT = process.env.PORT || 8000;
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your frontend URL
+    origin: "*", // Your frontend URL
     credentials: true, // Allow cookies to be sent
   })
 );
 
-// For all routes, enable CORS
-app.options("*", cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

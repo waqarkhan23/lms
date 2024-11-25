@@ -19,10 +19,19 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Link, useNavigate } from "react-router-dom";
+import useLogoutMutation from "@/hooks/auth/Logout";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector(
+    (state) => state.auth?.isAuthenticated ?? false
+  );
+  console.log(isAuthenticated);
   const navigate = useNavigate();
+  const { mutate: logout } = useLogoutMutation();
+  const handleLogout = () => {
+    logout();
+  };
   return (
     <div className="h-16 dark:bg-[#0A0A0A] bg-white border-b border-b-gray-200 fixed top-0 left-0 right-0 duration-300 z-50 dark:border-b-gray-800">
       {/* for Desktop */}
@@ -32,15 +41,12 @@ const Navbar = () => {
           <h1 className="hidden md:block font-extrabold text-2xl">LMS</h1>
         </div>
 
-        {user ? (
+        {isAuthenticated ? (
           <div className="flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
+                  <AvatarImage src={user?.photoUrl} alt="image" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
@@ -57,7 +63,7 @@ const Navbar = () => {
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -104,7 +110,14 @@ export default Navbar;
 
 const MobileNavbar = () => {
   const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector(
+    (state) => state.auth?.isAuthenticated ?? false
+  );
   const navigate = useNavigate();
+  const { mutate: logout } = useLogoutMutation();
+  const handleLogout = () => {
+    logout();
+  };
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -124,7 +137,7 @@ const MobileNavbar = () => {
           </SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 py-4">
-          {user ? (
+          {isAuthenticated ? (
             <>
               <Button variant="ghost" className="justify-start">
                 <School className="mr-2 h-4 w-4" />
@@ -134,7 +147,11 @@ const MobileNavbar = () => {
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </Button>
-              <Button variant="ghost" className="justify-start">
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                className="justify-start"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </Button>
