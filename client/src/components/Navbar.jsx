@@ -69,7 +69,9 @@ const Navbar = () => {
                 </DropdownMenuItem>
                 {user.role === "instructor" && (
                   <DropdownMenuItem>
-                    <Button className=" ">Dashboard</Button>
+                    <Button onClick={() => navigate("/admin")}>
+                      Dashboard
+                    </Button>
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -156,7 +158,9 @@ const MobileNavbar = () => {
                 <span>Log out</span>
               </Button>
               {user.role === "instructor" && (
-                <Button className=" ">Dashboard</Button>
+                <Button onClick={() => navigate("/admin")} className=" ">
+                  Dashboard
+                </Button>
               )}
             </>
           ) : (
