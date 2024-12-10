@@ -145,3 +145,18 @@ export const deleteCourse = async (req, res) => {
       .json({ message: error.message || "Failed to delete course." });
   }
 };
+
+export const getCourseById = async (req, res) => {
+  const courseId = req.params.id;
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    res.status(200).json({ message: "Course retrieved successfully", course });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: error.message || "Failed to retrieve course." });
+  }
+};

@@ -5,6 +5,7 @@ import AddCourse from "./pages/admin/course/AddCourse";
 import CreateCourse from "./pages/admin/course/CreateCourse";
 import UpdateCourse from "./pages/admin/course/UpdateCourse";
 import Dashboard from "./pages/admin/Dashboard";
+import CreateLecture from "./pages/admin/lecture/CreateLecture";
 
 import Home from "./pages/client/Home";
 import MyLearning from "./pages/client/MyLearning";
@@ -37,6 +38,10 @@ function App() {
               <Route
                 path="courses/edit-course/:id"
                 element={<UpdateCourse />}
+              />
+              <Route
+                path="courses/edit-course/:id/lecture"
+                element={<CreateLecture />}
               />
             </Route>
           </Route>

@@ -27,37 +27,41 @@ import { Link, useParams } from "react-router-dom";
 import RichTextEditor from "@/components/RichTextEditor";
 import useUpdateCourse from "@/hooks/courses/useUpdateCourse";
 import useDeleteCourse from "@/hooks/courses/useDeleteCourse";
-
+import useGetCourseByIdQuery from "@/hooks/courses/useGetCourseById";
 const UpdateCourse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { mutate: editCourse } = useUpdateCourse();
   const [previewImage, setPreviewImage] = useState("");
   const { mutate: deleteCourse } = useDeleteCourse();
+  const { data: courseData } = useGetCourseByIdQuery({ id: id });
   const [course, setCourse] = useState({
-    title: "",
-    subtitle: "",
-    description: "",
-    price: "",
-    level: "",
-    category: "",
+    title: courseData?.courseTitle || "",
+    subtitle: courseData?.subTitle || "",
+    description: courseData?.description || "",
+    price: courseData?.coursePrice || "",
+    level: courseData?.courseLevel || "",
+    category: courseData?.category || "",
     // status: "",
     thumbnail: null,
   });
 
+  console.log("Course data:", course);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCourse({ ...course, [name]: value });
   };
 
   const handleFileChange = (e) => {
-    setCourse({ ...course, thumbnail: e.target.files[0] });
-    const fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      setPreviewImage(fileReader.result);
-      fileReader.readAsDataURL(e.target.files[0]);
-      console.log("preview image:", previewImage);
-    };
+    const file = e.target.files[0];
+    if (file) {
+      setCourse({ ...course, thumbnail: file });
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        setPreviewImage(fileReader.result);
+      };
+      fileReader.readAsDataURL(file);
+    }
   };
   const handleDelete = () => {
     console.log("Deleting course:", id);
@@ -195,9 +199,9 @@ const UpdateCourse = () => {
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
+                    <SelectItem value="Beginner">Beginner</SelectItem>
+                    <SelectItem value="Intermediate">Intermediate</SelectItem>
+                    <SelectItem value="Advanced">Advanced</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
